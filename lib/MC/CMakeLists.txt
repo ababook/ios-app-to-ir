@@ -21,6 +21,7 @@ add_llvm_library(LLVMMC
   MCInstrDesc.cpp
   MCLabel.cpp
   MCLinkerOptimizationHint.cpp
+  MCOptimization.cpp
   MCMachOStreamer.cpp
   MCMachObjectTargetWriter.cpp
   MCNullStreamer.cpp

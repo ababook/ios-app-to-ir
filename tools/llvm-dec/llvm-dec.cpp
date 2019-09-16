@@ -1,5 +1,6 @@
 #define DEBUG_TYPE "llvm-dec"
 #include "llvm/ADT/StringExtras.h"
+#include <unistd.h>
 #include "llvm/ADT/Triple.h"
 #include "llvm/DC/DCInstrSema.h"
 #include "llvm/DC/DCRegisterSema.h"
@@ -20,6 +21,7 @@
 #include "llvm/MC/MCObjectFileInfo.h"
 #include "llvm/MC/MCRegisterInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
+#include "llvm/MC/MCOptimization.h"
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Debug.h"
@@ -106,6 +108,8 @@ static const Target *getTarget(const ObjectFile *Obj) {
   TripleName = TheTriple.getTriple();
   return TheTarget;
 }
+
+
 
 int main(int argc, char **argv) {
     //git
@@ -208,7 +212,19 @@ int main(int argc, char **argv) {
   std::unique_ptr<MCObjectDisassembler> OD(
       new MCObjectDisassembler(*Obj, *DisAsm, *MIA));
   std::unique_ptr<MCModule> MCM(OD->buildModule());
+  
 
+  /*
+    add by -death
+   */
+  if(MachOObjectFile *MachO = dyn_cast<MachOObjectFile>(Obj)){
+    std::unique_ptr<MCOptimization> MCOpt(new MCOptimization(&(*MCM),MachO));
+    MCOpt->try_to_optimize();
+  }
+  
+  /*
+    add by -death end 
+   */
   if (!MCM)
     return 1;
 
@@ -225,6 +241,7 @@ int main(int argc, char **argv) {
 
   // FIXME: should we have a non-default datalayout?
   DataLayout DL("");
+  
 
   std::unique_ptr<DCRegisterSema> DRS(
       TheTarget->createDCRegisterSema(TripleName, *MRI, *MII, DL));
@@ -251,6 +268,17 @@ int main(int argc, char **argv) {
 //      DT->translateRecursivelyAt(TranslationEntrypoint));
     DT->translateAllKnownFunctions();
     Function *main_fn = DT->getCurrentTranslationModule()->getFunction("fn_" + utohexstr(TranslationEntrypoint));
+
+    /*
+      add by -death 
+     */
+    Function *target_fun = DT->getCurrentTranslationModule()->getFunction("fn_100007540");
+    if(target_fun!=nullptr){
+      
+    }
+    /*
+      add by -death end 
+     */
 //    assert(main_fn);
     if (main_fn)
         DT->createMainFunctionWrapper(main_fn);

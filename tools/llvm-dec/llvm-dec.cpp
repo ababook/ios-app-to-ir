@@ -76,8 +76,13 @@ EnableDisassemblyCache("enable-mcod-disass-cache",
     cl::desc("Enable the MC Object disassembly instruction cache"),
     cl::init(false), cl::Hidden);
 
+static cl::opt<bool>
+OptimizeOption("MC_opt",cl::desc("try to optimize MC instruction"),cl::init(false));
+
 static cl::opt<std::string>
         OutputFilename("o", cl::desc("Output filename"), cl::value_desc("filename"));
+
+
 
 static StringRef ToolName;
 
@@ -217,10 +222,13 @@ int main(int argc, char **argv) {
   /*
     add by -death
    */
-  if(MachOObjectFile *MachO = dyn_cast<MachOObjectFile>(Obj)){
-    std::unique_ptr<MCOptimization> MCOpt(new MCOptimization(&(*MCM),MachO));
-    MCOpt->try_to_optimize();
+  if(OptimizeOption){
+    if(MachOObjectFile *MachO = dyn_cast<MachOObjectFile>(Obj)){
+      std::unique_ptr<MCOptimization> MCOpt(new MCOptimization(&(*MCM),MachO));
+      MCOpt->try_to_optimize();
+    }
   }
+  
   
   /*
     add by -death end 

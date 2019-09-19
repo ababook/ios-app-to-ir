@@ -365,6 +365,18 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
                                 DCTranslatedInst &TranslatedInst) {
   CurrentInst = &DecodedInst;
   CurrentTInst = &TranslatedInst;
+  /*
+    add by -death
+   */
+  if(record_or_not == true){
+    Builder->set_record_or_not(true);
+    Builder->set_cur_address(DecodedInst.Address);
+    DRS.set_builder_cur_add(DecodedInst.Address);
+  }
+  /*
+    add by -death end 
+   */
+  
   DRS.SwitchToInst(DecodedInst);
 
   if (CurrentInst->Address == 0x101AC6BC8) {
@@ -381,6 +393,16 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
   }
 
   Idx = OpcodeToSemaIdx[CurrentInst->Inst.getOpcode()];
+  /*
+    add by -death  测试删除所有的nop代码。
+   */
+  if(CurrentInst->Inst.getOpcode()==738){
+   // errs()<<"the opcode is hint \n";
+    return true;
+  }
+  /*
+    add by -death end 
+   */
   DEBUG(errs() << "[+]Idx: " << Idx << "\n");
   if (!translateTargetInst()) {
     if (Idx == 0)
@@ -455,6 +477,13 @@ bool DCInstrSema::translateOpcode(unsigned Opcode) {
     translateBinOp(Instruction::FRem);
     break;
   case ISD::SHL:
+    /*
+      add by -death
+     */
+   // break;
+    /*
+      add by -death end;
+     */
     translateBinOp(Instruction::Shl);
     break;
   case ISD::SRL:
@@ -633,7 +662,7 @@ bool DCInstrSema::translateOpcode(unsigned Opcode) {
     break;
   }
   case DCINS::GET_RC: {
-    unsigned MIOperandNo = Next();
+      unsigned MIOperandNo = Next();
     Type *ResType = NULL;
     if (ResEVT.getEVTString() != "Untyped") {
       ResType = ResEVT.getTypeForEVT(*Ctx);

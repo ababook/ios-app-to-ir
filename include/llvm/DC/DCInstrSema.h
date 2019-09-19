@@ -63,6 +63,16 @@ public:
 
   void createExternalWrapperFunction(uint64_t Addr, StringRef Name);
   void createExternalTailCallBB(uint64_t Addr);
+  /*
+  add by -death
+   */
+  
+  void set_record_add(bool record_add){
+    record_or_not = record_add;
+  }
+  /*
+  add by -death end;
+   */
 
         DCRegisterSema &getDRS()       { return DRS; }
   const DCRegisterSema &getDRS() const { return DRS; }
@@ -86,13 +96,19 @@ protected:
 
   // Following members are always valid.
   void *DynTranslateAtCBPtr;
-
+  /*
+    add by -death
+   */
+  bool record_or_not;
+  /*
+  add by -death end;
+   */
   // Following members are valid only inside a Module.
   LLVMContext *Ctx;
   Module *TheModule;
   DCRegisterSema &DRS;
   FunctionType *FuncType;
-
+  
   // Following members are valid only inside a Function
   Function *TheFunction;
   const MCFunction *TheMCFunction;

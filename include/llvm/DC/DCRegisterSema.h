@@ -123,6 +123,17 @@ protected:
   virtual void onRegisterSet(unsigned RegNo, Value *Val) {}
 
 public:
+  /*
+   add by -death
+   */
+  void set_builder_cur_add(uint64_t cur_add){
+    Builder->set_record_or_not(true);
+    Builder->set_cur_address(cur_add);
+  }
+ 
+  /*
+    add by -death end ;
+   */
   StructType *getRegSetType() const { return RegSetType; }
   // Compute the register's offset in bytes from the start of the regset.
   // Also return it's size in bytes.

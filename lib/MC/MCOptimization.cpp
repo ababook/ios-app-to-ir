@@ -122,9 +122,6 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                         tmp_inst->setOpcode(0);
                         BL_OBJ_RELEASE_SIZE++;
                         auto pre_decode_inst = tmp_decode_inst;
-                        if(tmp_decode_inst==tmp_bb->begin()){
-                            break;
-                        }
                         pre_decode_inst--;
                         const MCInst* tmp_pre_inst = &pre_decode_inst->Inst;
                         StringRef tmp_name; 
@@ -133,7 +130,14 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                         unsigned op_num = tmp_pre_inst->getNumOperands();
                         for(int tmp_i=0;tmp_i<op_num;tmp_i++){
                             MCOperand tmp_op = tmp_pre_inst->getOperand(tmp_i);
-                           
+                            if(tmp_op.isImm()){
+                                unsigned tmp_imm = tmp_op.getImm();
+                                //errs()<<"op "<<tmp_i<<" is imm : "<<tmp_imm<<"\n";
+                            }
+                            if(tmp_op.isReg()){
+                                unsigned tmp_reg = tmp_op.getReg();
+                                 //errs()<<"op "<<tmp_i<<" is reg : "<<tmp_reg<<"\n";
+                            }
                         }
                     }
                 }
@@ -144,7 +148,6 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
 }
 
 void MCOptimization::try_to_optimize(){
-    //errs()<<"try to optimize\n";
     for(MCModule::func_iterator FI = cur_module->func_begin(),
     FE = cur_module->func_end();FI !=FE; ++FI){
         MCFunction* tmp_func;

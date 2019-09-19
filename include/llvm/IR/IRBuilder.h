@@ -17,11 +17,13 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/Twine.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/ConstantFolder.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/Function.h"
+#include "llvm/IR/Metadata.h"
 #include "llvm/IR/GlobalVariable.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/LLVMContext.h"
@@ -56,15 +58,17 @@ protected:
   BasicBlock::iterator InsertPt;
   LLVMContext &Context;
 
+
   MDNode *DefaultFPMathTag;
   FastMathFlags FMF;
 public:
 
+  
   IRBuilderBase(LLVMContext &context, MDNode *FPMathTag = nullptr)
     : Context(context), DefaultFPMathTag(FPMathTag), FMF() {
     ClearInsertionPoint();
   }
-
+  
   //===--------------------------------------------------------------------===//
   // Builder configuration methods
   //===--------------------------------------------------------------------===//
@@ -524,7 +528,28 @@ public:
   explicit IRBuilder(LLVMContext &C, MDNode *FPMathTag = nullptr)
     : IRBuilderBase(C, FPMathTag), Folder() {
   }
-
+  
+  /*
+   add by -death
+   */
+   /*
+   add by -death
+   */
+  bool record_or_not=false;
+  void set_record_or_not(bool record){
+    record_or_not = record;
+  }
+  uint64_t cur_code_add;
+  void set_cur_address(uint64_t cur_address){
+    cur_code_add = cur_address;
+  }
+  /*
+   add by -death end 
+   */
+  /*
+   add by -death end 
+   */
+  
   explicit IRBuilder(BasicBlock *TheBB, const T &F, MDNode *FPMathTag = nullptr)
     : IRBuilderBase(TheBB->getContext(), FPMathTag), Folder(F) {
     SetInsertPoint(TheBB);
@@ -552,6 +577,8 @@ public:
     SetInsertPoint(TheBB, IP);
   }
 
+ 
+
   /// \brief Get the constant folder being used.
   const T &getFolder() { return Folder; }
 
@@ -562,6 +589,11 @@ public:
   /// \brief Insert and return the specified instruction.
   template<typename InstTy>
   InstTy *Insert(InstTy *I, const Twine &Name = "") const {
+    if(record_or_not ==true){
+      MDNode* tmp_node = MDNode::get(getContext(),MDString::get(getContext(),"line num : "+utohexstr(cur_code_add)));
+      I->setMetadata("code line num",tmp_node);
+    }
+    
     this->InsertHelper(I, Name, BB, InsertPt);
     this->SetInstDebugLocation(I);
     return I;

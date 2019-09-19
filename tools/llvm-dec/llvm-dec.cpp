@@ -79,6 +79,9 @@ EnableDisassemblyCache("enable-mcod-disass-cache",
 static cl::opt<bool>
 OptimizeOption("MC_opt",cl::desc("try to optimize MC instruction"),cl::init(false));
 
+static cl::opt<bool>
+RecordAdd("REC_add",cl::desc("start to record the address of instruction"),cl::init(false));
+
 static cl::opt<std::string>
         OutputFilename("o", cl::desc("Output filename"), cl::value_desc("filename"));
 
@@ -112,6 +115,18 @@ static const Target *getTarget(const ObjectFile *Obj) {
   // Update the triple name and return the found target.
   TripleName = TheTriple.getTriple();
   return TheTarget;
+}
+
+uint32_t get_all_code_size(MCModule* target_module){
+  uint32_t code_size=0;
+  for(MCModule::func_iterator func = target_module->func_begin();func!=target_module->func_end();func++){
+      MCFunction* tmp_func = &(**func);
+      for(MCFunction::iterator bb = tmp_func->begin();bb!=tmp_func->end();bb++){
+        MCBasicBlock* tmp_bb  = &(**bb);
+        code_size += tmp_bb->size();
+      }
+  }
+  return code_size;
 }
 
 
@@ -223,10 +238,13 @@ int main(int argc, char **argv) {
     add by -death
    */
   if(OptimizeOption){
+    uint32_t code_size;
+    code_size = get_all_code_size(&(*MCM));
     if(MachOObjectFile *MachO = dyn_cast<MachOObjectFile>(Obj)){
       std::unique_ptr<MCOptimization> MCOpt(new MCOptimization(&(*MCM),MachO));
       MCOpt->try_to_optimize();
     }
+    errs()<<"all code size : "<<code_size<<"\n";
   }
   
   
@@ -263,6 +281,13 @@ int main(int argc, char **argv) {
     errs() << "error: no dc instruction sema for target " << TripleName << "\n";
     return 1;
   }
+  /*
+  add by -death 
+   */
+  DIS->set_record_add(RecordAdd);
+  /*
+  add by -death end 
+   */
 
   std::unique_ptr<DCTranslator> DT(
     new DCTranslator(getGlobalContext(), DL,
@@ -282,7 +307,10 @@ int main(int argc, char **argv) {
      */
     Function *target_fun = DT->getCurrentTranslationModule()->getFunction("fn_100007540");
     if(target_fun!=nullptr){
-      
+      BasicBlock* tmp_bb = target_fun->begin();
+      Instruction* tmp_inst = tmp_bb->begin();
+      MDNode* tmp_md = tmp_inst->getMetadata("code line num");
+      std::string tmp_str = cast<MDString>(tmp_md->getOperand(0))->getString();
     }
     /*
       add by -death end 

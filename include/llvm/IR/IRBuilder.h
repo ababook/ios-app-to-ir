@@ -590,8 +590,8 @@ public:
   template<typename InstTy>
   InstTy *Insert(InstTy *I, const Twine &Name = "") const {
     if(record_or_not ==true){
-      MDNode* tmp_node = MDNode::get(getContext(),MDString::get(getContext(),"line num : "+utohexstr(cur_code_add)));
-      I->setMetadata("code line num",tmp_node);
+      MDNode* tmp_node = MDNode::get(getContext(),MDString::get(getContext(),utohexstr(cur_code_add)));
+      I->setMetadata("num",tmp_node);
     }
     
     this->InsertHelper(I, Name, BB, InsertPt);

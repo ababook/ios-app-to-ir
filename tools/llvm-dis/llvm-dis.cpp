@@ -54,6 +54,10 @@ static cl::opt<bool>
 ShowAnnotations("show-annotations",
                 cl::desc("Add informational comments to the .ll file"));
 
+//static cl::opt<bool>
+//ShowOffset("show-offset",
+//                cl::desc("Show offset informational to the .ll file"));
+
 static cl::opt<bool> PreserveAssemblyUseListOrder(
     "preserve-ll-uselistorder",
     cl::desc("Preserve use-list order when writing LLVM assembly."),
@@ -68,6 +72,13 @@ static void printDebugLoc(const DebugLoc &DL, formatted_raw_ostream &OS) {
     printDebugLoc(IDL, OS);
   }
 }
+    
+//class OffsetWriter : public AssemblyAnnotationWriter {
+//public:
+//
+//
+//};
+    
 class CommentWriter : public AssemblyAnnotationWriter {
 public:
   void emitFunctionAnnot(const Function *F,
@@ -75,6 +86,18 @@ public:
     OS << "; [#uses=" << F->getNumUses() << ']';  // Output # uses
     OS << '\n';
   }
+
+  void emitInstructionAnnot(const Instruction *I,
+                              formatted_raw_ostream &OS) override{
+    if(MDNode* tmp_md = I->getMetadata("num")){
+      OS << "[0x" << cast<MDString>(tmp_md->getOperand(0))->getString() << "]";
+    }
+    else
+    {
+      OS << "[0xFFFFFFFFF]";
+    }
+  }
+    
   void printInfoComment(const Value &V, formatted_raw_ostream &OS) override {
     bool Padded = false;
     if (!V.getType()->isVoidTy()) {
@@ -190,7 +213,8 @@ int main(int argc, char **argv) {
   std::unique_ptr<AssemblyAnnotationWriter> Annotator;
   if (ShowAnnotations)
     Annotator.reset(new CommentWriter());
-
+//  if (ShowOffset)
+//    Annotator.reset(new OffsetWriter());
   // All that llvm-dis does is write the assembly to a file.
   if (!DontPrint)
     M->print(Out->os(), Annotator.get(), PreserveAssemblyUseListOrder);

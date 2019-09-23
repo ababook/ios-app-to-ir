@@ -305,13 +305,13 @@ int main(int argc, char **argv) {
     /*
       add by -death 
      */
-    Function *target_fun = DT->getCurrentTranslationModule()->getFunction("fn_100007540");
+   /* Function *target_fun = DT->getCurrentTranslationModule()->getFunction("fn_100007540");
     if(target_fun!=nullptr){
       BasicBlock* tmp_bb = target_fun->begin();
       Instruction* tmp_inst = tmp_bb->begin();
       MDNode* tmp_md = tmp_inst->getMetadata("num");
       std::string tmp_str = cast<MDString>(tmp_md->getOperand(0))->getString();
-    }
+    }*/
     /*
       add by -death end 
      */

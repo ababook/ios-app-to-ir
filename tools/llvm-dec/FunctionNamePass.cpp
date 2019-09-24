@@ -93,7 +93,20 @@ bool FunctionNamePass::runOnModule(Module &M) {
         if (A) {
             if (FunctionNames.find(A) != FunctionNames.end()) {
                 DEBUG(errs() << "Change fn_" << utohexstr(A) << " to " << FunctionNames[A] << "\n");
-                F_it->setName(FunctionNames[A]);
+                 /*
+                    add by -death
+                 */
+                std::string tmp_str = FunctionNames[A];
+                for(int tmp_i=0;tmp_i<tmp_str.size();tmp_i++){
+                    if(tmp_str[tmp_i]==0){
+                        tmp_str[tmp_i] = '0';
+                    }
+                }
+                F_it->setName(tmp_str);
+                /*
+                    add by -death end 
+                 */
+                //F_it->setName(FunctionNames[A]);
 
             }
         } else {

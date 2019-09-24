@@ -302,20 +302,7 @@ int main(int argc, char **argv) {
     DT->translateAllKnownFunctions();
     Function *main_fn = DT->getCurrentTranslationModule()->getFunction("fn_" + utohexstr(TranslationEntrypoint));
 
-    /*
-      add by -death 
-     */
-    Function *target_fun = DT->getCurrentTranslationModule()->getFunction("fn_100007540");
-    if(target_fun!=nullptr){
-      BasicBlock* tmp_bb = target_fun->begin();
-      Instruction* tmp_inst = tmp_bb->begin();
-      MDNode* tmp_md = tmp_inst->getMetadata("num");
-      if(tmp_md != nullptr)
-        std::string tmp_str = cast<MDString>(tmp_md->getOperand(0))->getString();
-    }
-    /*
-      add by -death end 
-     */
+    
 //    assert(main_fn);
     if (main_fn)
         DT->createMainFunctionWrapper(main_fn);

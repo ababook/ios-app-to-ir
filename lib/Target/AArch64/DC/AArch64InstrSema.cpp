@@ -3751,7 +3751,13 @@ void AArch64InstrSema::translateTargetIntrinsic(unsigned IntrinsicID) {
 
             std::vector<Type*> types;
             types.push_back(ResEVT.getTypeForEVT(*Ctx));
-            types.push_back(op->getType());
+            /*
+            add by -death
+            */
+            //types.push_back(op->getType());
+            /*
+            add by -death end 
+            */
 
             Function *intrinsic = Intrinsic::getDeclaration(TheModule, (llvm::Intrinsic::ID)IntrinsicID, types);
 

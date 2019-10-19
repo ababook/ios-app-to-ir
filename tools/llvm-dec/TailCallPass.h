@@ -16,6 +16,7 @@ namespace llvm {
     public:
         TailCallPass(MCObjectDisassembler::AddressSetTy functionStarts);
         virtual bool runOnModule(Module &M) override;
+        const char * getPassName() const override {return "TailCall Pass";}
 
     private:
         MCObjectDisassembler::AddressSetTy functionStarts;

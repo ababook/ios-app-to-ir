@@ -31,6 +31,7 @@ class NonVolatileRegistersPass : public FunctionPass {
         static char ID;
 
         NonVolatileRegistersPass() : FunctionPass(ID) { };
+        const char * getPassName() const override {return "NonVolatileRegisters Pass";}
 
         virtual bool runOnFunction(Function &F);
 

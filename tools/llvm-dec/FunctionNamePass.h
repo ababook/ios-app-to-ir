@@ -17,7 +17,7 @@ namespace llvm {
         FunctionNamePass(object::MachOObjectFile *MachO, std::unique_ptr<MCDisassembler> &DisAsm);
 
         virtual bool runOnModule(Module &M) override;
-
+        const char * getPassName() const override {return "FunctionName Pass";}
         typedef std::map<uint64_t, uint64_t> StubToLocalMap_t;
     private:
         typedef std::map<uint64_t, std::string> FunctionNamesMap_t;

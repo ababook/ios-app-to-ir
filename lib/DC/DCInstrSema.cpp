@@ -391,12 +391,17 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
         Builder->getInt64Ty()->getPointerTo());
     Builder->CreateStore(CurIVal, CurIPtr, true);
   }
-
+    CurrentInst->Inst.dump();
+    errs() << "[!]CurrentInst->Address: " << utohexstr(CurrentInst->Address) << "\n";
+    if (0x1000060E4 == CurrentInst->Address)
+    {
+        errs() << "foo";
+    }
   Idx = OpcodeToSemaIdx[CurrentInst->Inst.getOpcode()];
   /*
     add by -death  测试删除所有的nop代码。
    */
-  if(CurrentInst->Inst.getOpcode()==738){
+  if(CurrentInst->Inst.getOpcode()==738){       // DCInstrSema scales to both X86 and AArch64, move this code snippet to AArch64InstrSema instead. AArch64::HINT http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0802a/HINT.html
    // errs()<<"the opcode is hint \n";
     return true;
   }
@@ -419,7 +424,7 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
     }
 
     while ((Opcode = Next()) != DCINS::END_OF_INSTRUCTION) {
-      DEBUG(errs() << "[+]Opcode: " << Opcode << "\n");
+      errs() << "[+]Opcode: " << utohexstr(Opcode) << "\n";
       if (translateOpcode(Opcode)) continue;
       errs() << "[!]CurrentInst->Address: " << utohexstr(CurrentInst->Address) << "\n";
       break;

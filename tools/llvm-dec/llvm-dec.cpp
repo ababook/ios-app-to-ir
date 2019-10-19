@@ -37,6 +37,7 @@
 #include "llvm/IR/Verifier.h"
 #include "llvm/Support/ToolOutputFile.h"
 #include "llvm/Bitcode/ReaderWriter.h"
+#include "llvm/Support/Timer.h"
 
 using namespace llvm;
 using namespace object;
@@ -146,19 +147,27 @@ int main(int argc, char **argv) {
   cl::ParseCommandLineOptions(argc, argv, "Function disassembler\n");
 
   ToolName = argv[0];
+  
+  TimerGroup TG("... llvm-dec module time report ...");
 
+  Timer *BinLoadTimer = new Timer("Bin load time", TG);
+  BinLoadTimer->startTimer();
   auto Binary = createBinary(InputFilename);
   if (std::error_code ec = Binary.getError()) {
     errs() << ToolName << ": '" << InputFilename << "': "
            << ec.message() << ".\n";
     return 1;
   }
+  BinLoadTimer->stopTimer();
 
+  Timer *MachOParseTimer = new Timer("Mach-O parse time", TG);
+  MachOParseTimer->startTimer();
   ObjectFile *Obj;
   if (!(Obj = dyn_cast<ObjectFile>((*Binary).getBinary())))
     errs() << ToolName << ": '" << InputFilename << "': "
            << "Unrecognized file type.\n";
-
+  MachOParseTimer->stopTimer();
+    
   const Target *TheTarget = getTarget(Obj);
 
   std::unique_ptr<const MCRegisterInfo> MRI(
@@ -229,10 +238,13 @@ int main(int argc, char **argv) {
   std::unique_ptr<const MCInstrAnalysis> MIA(
       TheTarget->createMCInstrAnalysis(MII.get()));
 
+  Timer *MCTimer = new Timer("MC time", TG);
+  MCTimer->startTimer();
   std::unique_ptr<MCObjectDisassembler> OD(
       new MCObjectDisassembler(*Obj, *DisAsm, *MIA));
   std::unique_ptr<MCModule> MCM(OD->buildModule());
-  
+  MCTimer->stopTimer();
+//  delete MCTimer;
 
   /*
     add by -death
@@ -297,12 +309,16 @@ int main(int argc, char **argv) {
   if (!TranslationEntrypoint)
     TranslationEntrypoint = MOS->getEntrypoint();
 
+    Timer *DCTimer = new Timer("DC time", TG);
+    DCTimer->startTimer();
 //  DT->createMainFunctionWrapper(
 //      DT->translateRecursivelyAt(TranslationEntrypoint));
     DT->translateAllKnownFunctions();
     Function *main_fn = DT->getCurrentTranslationModule()->getFunction("fn_" + utohexstr(TranslationEntrypoint));
-
-    
+    DCTimer->stopTimer();
+ 
+    Timer *FuncTimer = new Timer("FunctionNamePass time", TG);
+    FuncTimer->startTimer();
 //    assert(main_fn);
     if (main_fn)
         DT->createMainFunctionWrapper(main_fn);
@@ -314,7 +330,8 @@ int main(int argc, char **argv) {
         pm->add(new FunctionNamePass(MachO, DisAsm));
         pm->run(*DT->getCurrentTranslationModule());
     }
-
+    FuncTimer->stopTimer();
+    
     if (!NoPrint) {
         std::error_code EC;
         sys::fs::OpenFlags OpenFlags = sys::fs::F_None;
@@ -326,9 +343,13 @@ int main(int argc, char **argv) {
             errs() << EC.message() << '\n';
             return -1;
         }
+        
 
         if (PrintBitcode) {
+            Timer *SaveBinTimer = new Timer("Bin save time", TG);
+            SaveBinTimer->startTimer();
             WriteBitcodeToFile(DT->getCurrentTranslationModule(), FDOut->os(), true);
+            SaveBinTimer->stopTimer();
         } else {
             FDOut->os() << *DT->getCurrentTranslationModule();
         }

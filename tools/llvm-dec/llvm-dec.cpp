@@ -243,6 +243,17 @@ int main(int argc, char **argv) {
   std::unique_ptr<MCObjectDisassembler> OD(
       new MCObjectDisassembler(*Obj, *DisAsm, *MIA));
   std::unique_ptr<MCModule> MCM(OD->buildModule());
+    
+  errs() << "linear code size: 0x" << utohexstr(OD->TextSegList.size()) << "\n";
+  errs() << "recursive disassembled code size: 0x" << utohexstr(OD->InstParsedList.size()) << "\n";
+  
+    //ugly coding, but I only find PackedVector support such kind of operation...
+    for (size_t i = 0; i < OD->TextSegList.size(); ++i) {
+      const uint64_t Addr = OD->TextSegList[i];
+      if (OD->InstParsedList.count(Addr) == 0 && Addr % 4 == 0)
+        errs() << "Cross check IDA for addr: 0x"<< utohexstr(Addr) << "\n";
+    }
+        
   MCTimer->stopTimer();
 //  delete MCTimer;
 

@@ -115,6 +115,9 @@ MCModule *MCObjectDisassembler::buildModule() {
       if (!isText)
         continue;
 
+        for(uint64_t i = StartAddr; i < StartAddr + SecSize; i ++)
+            TextSegList.insert(i);
+        
       StringRef Contents;
       if (Section.getContents(Contents))
         continue;
@@ -366,6 +369,9 @@ void MCObjectDisassembler::disassembleFunctionAt(
         if (Dis.getInstruction(Inst, InstSize,
                                Region.Bytes.slice(Addr - Region.Addr), Addr,
                                nulls(), nulls())) {
+            
+            for(uint64_t i = 0; i < 4; i ++)
+                InstParsedList.insert(Addr + i);
 
         } else {
           DEBUG(dbgs() << "Failed disassembly at " << utohexstr(Addr) << "!\n");

@@ -21,6 +21,7 @@
 #include "llvm/MC/MCInst.h"
 #include <vector>
 #include "llvm/Object/ObjectiveCFile.h"
+#include "llvm/ADT/SetVector.h"
 
 namespace llvm {
 
@@ -74,7 +75,13 @@ public:
   }
 
     AddressSetTy findFunctionStarts();
+    
+    // For evaluating outcome of the recursive disassembler
+    
+    SmallSetVector<uint64_t, 16> TextSegList;
+    SmallSetVector<uint64_t, 16> InstParsedList;
 
+    
 protected:
   const object::ObjectFile &Obj;
   const MCDisassembler &Dis;

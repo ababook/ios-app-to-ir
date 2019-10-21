@@ -400,11 +400,13 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
   Idx = OpcodeToSemaIdx[CurrentInst->Inst.getOpcode()];
   /*
     add by -death  测试删除所有的nop代码。
+    删除该测试代码
    */
+  /*
   if(CurrentInst->Inst.getOpcode()==738){       // DCInstrSema scales to both X86 and AArch64, move this code snippet to AArch64InstrSema instead. AArch64::HINT http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0802a/HINT.html
    // errs()<<"the opcode is hint \n";
     return true;
-  }
+  }*/
   /*
     add by -death end 
    */

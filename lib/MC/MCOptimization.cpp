@@ -116,29 +116,34 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                     if(target_func_name==nullptr){
                         break;
                     }
-                    if(strcmp(target_func_name,objc_release_str)==0){
-                       // optimized_inst.push_back(*tmp_decode_inst);
-                       uint64_t cur_inst_add = tmp_decode_inst->Address;
-                        tmp_inst->setOpcode(0);
-                        BL_OBJ_RELEASE_SIZE++;
-                        auto pre_decode_inst = tmp_decode_inst;
-                        pre_decode_inst--;
-                        const MCInst* tmp_pre_inst = &pre_decode_inst->Inst;
-                        StringRef tmp_name; 
-                        tmp_name = target_func->getName();
-                        unsigned op_code = tmp_pre_inst->getOpcode();
-                        unsigned op_num = tmp_pre_inst->getNumOperands();
-                        for(int tmp_i=0;tmp_i<op_num;tmp_i++){
-                            MCOperand tmp_op = tmp_pre_inst->getOperand(tmp_i);
-                            if(tmp_op.isImm()){
-                                unsigned tmp_imm = tmp_op.getImm();
-                                //errs()<<"op "<<tmp_i<<" is imm : "<<tmp_imm<<"\n";
-                            }
-                            if(tmp_op.isReg()){
-                                unsigned tmp_reg = tmp_op.getReg();
-                                 //errs()<<"op "<<tmp_i<<" is reg : "<<tmp_reg<<"\n";
-                            }
+                    
+                    for (std::string s : NoneSideEffectAPI) {
+                        if(strcmp(target_func_name, s.c_str()) == 0){
+//                            errs() << s << "\n";
+                           // optimized_inst.push_back(*tmp_decode_inst);
+                           uint64_t cur_inst_add = tmp_decode_inst->Address;
+                            tmp_inst->setOpcode(0);
+                            BL_OBJ_RELEASE_SIZE++;
+//                            auto pre_decode_inst = tmp_decode_inst;
+//                            pre_decode_inst--;
+//                            const MCInst* tmp_pre_inst = &pre_decode_inst->Inst;
+//                            StringRef tmp_name;
+//                            tmp_name = target_func->getName();
+//                            unsigned op_code = tmp_pre_inst->getOpcode();
+//                            unsigned op_num = tmp_pre_inst->getNumOperands();
+//                            for(int tmp_i=0;tmp_i<op_num;tmp_i++){
+//                                MCOperand tmp_op = tmp_pre_inst->getOperand(tmp_i);
+//                                if(tmp_op.isImm()){
+//                                    unsigned tmp_imm = tmp_op.getImm();
+//                                    //errs()<<"op "<<tmp_i<<" is imm : "<<tmp_imm<<"\n";
+//                                }
+//                                if(tmp_op.isReg()){
+//                                    unsigned tmp_reg = tmp_op.getReg();
+//                                     //errs()<<"op "<<tmp_i<<" is reg : "<<tmp_reg<<"\n";
+//                                }
+//                            }
                         }
+
                     }
                 }
             }
@@ -154,6 +159,10 @@ void MCOptimization::try_to_optimize(){
         tmp_func = &(**FI);
         optimize_func_code(tmp_func);
     }
-    errs()<<"bl _obj_release size : "<<BL_OBJ_RELEASE_SIZE<<"\n";
+//    errs()<<"bl _obj_release size : "<<BL_OBJ_RELEASE_SIZE<<"\n";
 }
+
+uint64_t MCOptimization::getOptimizedInstCount() const {return BL_OBJ_RELEASE_SIZE;}
+
+//http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489h/Cjafcggi.html
 

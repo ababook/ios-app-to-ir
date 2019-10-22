@@ -71,30 +71,51 @@ private:
   uint32_t BL_OBJ_RELEASE_SIZE;
 
   const char* objc_release_str = "_objc_release";
-  /*
-   https://clang.llvm.org/docs/AutomaticReferenceCounting.html
-   
-   id objc_autorelease(id value);
-   void objc_autoreleasePoolPop(void *pool);
-   void *objc_autoreleasePoolPush(void);
-   id objc_autoreleaseReturnValue(id value);
-   void objc_copyWeak(id *dest, id *src);
-   void objc_destroyWeak(id *object);
-   id objc_initWeak(id *object, id value);
-   id objc_loadWeak(id *object);
-   id objc_loadWeakRetained(id *object);
-   void objc_moveWeak(id *dest, id *src);
-   void objc_release(id value);
-   id objc_retain(id value);
-   id objc_retainAutorelease(id value);
-   id objc_retainAutoreleaseReturnValue(id value);
-   id objc_retainAutoreleasedReturnValue(id value);
-   id objc_retainBlock(id value);
-   void objc_storeStrong(id *object, id value);
-   id objc_storeWeak(id *object, id value);
-   
-   
-   */
+  
+  std::list<std::string> NoneSideEffectAPI =
+    {
+/*
+ https://clang.llvm.org/docs/AutomaticReferenceCounting.html
+ 
+ id objc_autorelease(id value);
+ void objc_autoreleasePoolPop(void *pool);
+ void *objc_autoreleasePoolPush(void);
+ id objc_autoreleaseReturnValue(id value);
+ void objc_copyWeak(id *dest, id *src); x
+ void objc_destroyWeak(id *object);
+ id objc_initWeak(id *object, id value);
+ id objc_loadWeak(id *object);
+ id objc_loadWeakRetained(id *object);
+ void objc_moveWeak(id *dest, id *src);
+ void objc_release(id value);
+ id objc_retain(id value);
+ id objc_retainAutorelease(id value);
+ id objc_retainAutoreleaseReturnValue(id value);
+ id objc_retainAutoreleasedReturnValue(id value);
+ id objc_retainBlock(id value);
+ void objc_storeStrong(id *object, id value);
+ id objc_storeWeak(id *object, id value);
+ 
+ */
+// for these explicitly state as `Always returns value'
+        "_objc_autorelease",
+        "_objc_autoreleaseReturnValue",
+        "_objc_retain",
+        "_objc_retainAutorelease",
+        "_objc_retainAutoreleaseReturnValue",
+        "_objc_retainAutoreleasedReturnValue",
+
+// for those remainings that take 1 arguments.
+        "_objc_release",
+        "_objc_autoreleasePoolPop",
+        "_objc_autoreleasePoolPush",
+        "_objc_destroyWeak",
+        "_objc_loadWeak",
+        "_objc_loadWeakRetained",
+        
+        
+    };
+    
   const uint64_t stub_item_size = 0xC;
   /*
   
@@ -110,6 +131,7 @@ public:
     analyze_macho_file_for_dynamic_symbol_name(cur_file);
   }
   void try_to_optimize();
+  uint64_t getOptimizedInstCount() const;
 
 };
 }

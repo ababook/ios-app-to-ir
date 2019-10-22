@@ -244,9 +244,9 @@ int main(int argc, char **argv) {
       new MCObjectDisassembler(*Obj, *DisAsm, *MIA));
   std::unique_ptr<MCModule> MCM(OD->buildModule());
     
-  errs() << "Linear code size: 0x" << utohexstr(OD->TextSegList.size()) << "\n";
-  errs() << "Recursive disassembled code size: 0x" << utohexstr(OD->InstParsedList.size()) << "\n";
-  errs() << "None general code size: 0x" << utohexstr(OD->NoneGeneralOperandList.size()) << "\n";
+  errs() << "Linear code size: " << utostr(OD->TextSegList.size()) << "\n";
+  errs() << "Recursive disassembled code size: " << utostr(OD->InstParsedList.size()) << "\n";
+  errs() << "None general operand code size: " << utostr(OD->NoneGeneralOperandList.size()) << "\n";
 
     //ugly coding, but I only find PackedVector support such kind of operation...
 //    for (size_t i = 0; i < OD->TextSegList.size(); ++i) {
@@ -267,11 +267,12 @@ int main(int argc, char **argv) {
     if(MachOObjectFile *MachO = dyn_cast<MachOObjectFile>(Obj)){
       std::unique_ptr<MCOptimization> MCOpt(new MCOptimization(&(*MCM),MachO));
       MCOpt->try_to_optimize();
+      errs() << "ARC code erased: " << utostr(MCOpt->getOptimizedInstCount()) << "\n";
     }
-    errs()<<"all code size : "<<code_size<<"\n";
+
+//    errs()<<"all code size : "<<code_size<<"\n";
   }
-  
-  
+
   /*
     add by -death end 
    */

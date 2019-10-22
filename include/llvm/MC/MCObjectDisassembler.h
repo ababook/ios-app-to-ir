@@ -80,7 +80,7 @@ public:
     
     SmallSetVector<uint64_t, 16> TextSegList;
     SmallSetVector<uint64_t, 16> InstParsedList;
-
+    SmallSetVector<uint64_t, 16> NoneGeneralOperandList;
     
 protected:
   const object::ObjectFile &Obj;

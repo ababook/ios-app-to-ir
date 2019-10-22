@@ -178,6 +178,11 @@ static DecodeStatus DecodeXSeqPairsClassRegisterClass(MCInst &Inst,
                                                       uint64_t Addr,
                                                       const void *Decoder);
 
+static void TagNoneGeneralOperand(MCInst &Inst)
+{
+    Inst.setOpcode(AArch64::PHI);
+}
+
 static bool Check(DecodeStatus &Out, DecodeStatus In) {
   switch (In) {
     case MCDisassembler::Success:
@@ -270,6 +275,9 @@ static DecodeStatus DecodeFPR128RegisterClass(MCInst &Inst, unsigned RegNo,
 
   unsigned Register = FPR128DecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -299,6 +307,9 @@ static DecodeStatus DecodeFPR64RegisterClass(MCInst &Inst, unsigned RegNo,
 
   unsigned Register = FPR64DecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -320,6 +331,9 @@ static DecodeStatus DecodeFPR32RegisterClass(MCInst &Inst, unsigned RegNo,
 
   unsigned Register = FPR32DecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -341,6 +355,9 @@ static DecodeStatus DecodeFPR16RegisterClass(MCInst &Inst, unsigned RegNo,
 
   unsigned Register = FPR16DecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -362,6 +379,9 @@ static DecodeStatus DecodeFPR8RegisterClass(MCInst &Inst, unsigned RegNo,
 
   unsigned Register = FPR8DecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -450,6 +470,9 @@ static DecodeStatus DecodeVectorRegisterClass(MCInst &Inst, unsigned RegNo,
 
   unsigned Register = VectorDecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -470,6 +493,9 @@ static DecodeStatus DecodeQQRegisterClass(MCInst &Inst, unsigned RegNo,
     return Fail;
   unsigned Register = QQDecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -493,6 +519,9 @@ static DecodeStatus DecodeQQQRegisterClass(MCInst &Inst, unsigned RegNo,
     return Fail;
   unsigned Register = QQQDecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -517,6 +546,9 @@ static DecodeStatus DecodeQQQQRegisterClass(MCInst &Inst, unsigned RegNo,
     return Fail;
   unsigned Register = QQQQDecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -537,6 +569,9 @@ static DecodeStatus DecodeDDRegisterClass(MCInst &Inst, unsigned RegNo,
     return Fail;
   unsigned Register = DDDecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -560,6 +595,9 @@ static DecodeStatus DecodeDDDRegisterClass(MCInst &Inst, unsigned RegNo,
     return Fail;
   unsigned Register = DDDDecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -584,6 +622,9 @@ static DecodeStatus DecodeDDDDRegisterClass(MCInst &Inst, unsigned RegNo,
     return Fail;
   unsigned Register = DDDDDecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Register));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -593,6 +634,9 @@ static DecodeStatus DecodeFixedPointScaleImm32(llvm::MCInst &Inst, unsigned Imm,
   // scale{5} is asserted as 1 in tblgen.
   Imm |= 0x20;
   Inst.addOperand(MCOperand::createImm(64 - Imm));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -600,6 +644,9 @@ static DecodeStatus DecodeFixedPointScaleImm64(llvm::MCInst &Inst, unsigned Imm,
                                                uint64_t Addr,
                                                const void *Decoder) {
   Inst.addOperand(MCOperand::createImm(64 - Imm));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
@@ -670,12 +717,18 @@ static DecodeStatus DecodeFMOVLaneInstruction(llvm::MCInst &Inst, unsigned Insn,
 static DecodeStatus DecodeVecShiftRImm(llvm::MCInst &Inst, unsigned Imm,
                                        unsigned Add) {
   Inst.addOperand(MCOperand::createImm(Add - Imm));
+ 
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 
 static DecodeStatus DecodeVecShiftLImm(llvm::MCInst &Inst, unsigned Imm,
                                        unsigned Add) {
   Inst.addOperand(MCOperand::createImm((Imm + Add) & (Add - 1)));
+  
+  TagNoneGeneralOperand(Inst);
+  
   return Success;
 }
 

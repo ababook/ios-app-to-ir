@@ -71,6 +71,30 @@ private:
   uint32_t BL_OBJ_RELEASE_SIZE;
 
   const char* objc_release_str = "_objc_release";
+  /*
+   https://clang.llvm.org/docs/AutomaticReferenceCounting.html
+   
+   id objc_autorelease(id value);
+   void objc_autoreleasePoolPop(void *pool);
+   void *objc_autoreleasePoolPush(void);
+   id objc_autoreleaseReturnValue(id value);
+   void objc_copyWeak(id *dest, id *src);
+   void objc_destroyWeak(id *object);
+   id objc_initWeak(id *object, id value);
+   id objc_loadWeak(id *object);
+   id objc_loadWeakRetained(id *object);
+   void objc_moveWeak(id *dest, id *src);
+   void objc_release(id value);
+   id objc_retain(id value);
+   id objc_retainAutorelease(id value);
+   id objc_retainAutoreleaseReturnValue(id value);
+   id objc_retainAutoreleasedReturnValue(id value);
+   id objc_retainBlock(id value);
+   void objc_storeStrong(id *object, id value);
+   id objc_storeWeak(id *object, id value);
+   
+   
+   */
   const uint64_t stub_item_size = 0xC;
   /*
   

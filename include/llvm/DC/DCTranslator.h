@@ -53,7 +53,14 @@ class DCTranslator {
   LLVMContext &Ctx;
   const DataLayout DL;
 
+  /*
+   modified by -death
+  */
   std::vector<std::unique_ptr<Module>> ModuleSet;
+  //std::vector<Module*> ModuleSet;
+  /*
+  modified by -death end 
+  */
 
   MCObjectDisassembler *MCOD;
   MCModule &MCM;
@@ -87,7 +94,27 @@ public:
 
   void translateAllKnownFunctions();
 
+  /*
+  add by -death
+  */
+
+  void translateOneFunction();
+
+  void translateSecondFunction();
+
+  void translateTargetNumFunction(int,int);
+
+  /*
+  add by -death end 
+  */
+
   void printCurrentModule(raw_ostream &OS);
+
+  void releaseAllModule(){
+    for(int tmp_i=0;tmp_i<ModuleSet.size();tmp_i++){
+      ModuleSet.at(tmp_i).release();
+    }
+  }
 
 private:
   void

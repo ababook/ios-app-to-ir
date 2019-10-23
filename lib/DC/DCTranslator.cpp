@@ -191,9 +191,16 @@ Module *DCTranslator::finalizeTranslationModule() {
   CurrentModule->setDataLayout(DL);
 
   CurrentFPM.reset(new legacy::FunctionPassManager(CurrentModule));
-
-  if (OptLevel >= TransOpt::Less) {
+  /*
+  *add by -death 
+  */
+  if(OptLevel >= TransOpt::None){
     CurrentFPM->add(new NonVolatileRegistersPass());
+  }
+  /*
+  add by -death end 
+  */
+  if (OptLevel >= TransOpt::Less) {
     CurrentFPM->add(createInstructionCombiningPass());
     CurrentFPM->add(createSROAPass());
 //    CurrentFPM->add(createCFGSimplificationPass());
@@ -236,6 +243,42 @@ Function *DCTranslator::getFiniRegSetFunction() {
 Function *DCTranslator::createMainFunctionWrapper(Function *Entrypoint) {
   return DIS.getOrCreateMainFunction(Entrypoint);
 }
+
+/*
+add by -death
+*/
+void DCTranslator::translateOneFunction(){
+  MCObjectDisassembler::AddressSetTy DummyTailCallTargets;
+  for(const auto &F : MCM.funcs()){
+    translateFunction(&*F,DummyTailCallTargets);
+    break;
+  }
+}
+void DCTranslator::translateSecondFunction(){
+  MCObjectDisassembler::AddressSetTy DummyTailCallTargets;
+  int i=0;
+  for(const auto &F : MCM.funcs()){
+    if(i==0){
+      continue;
+    }
+    translateFunction(&*F,DummyTailCallTargets);
+    break;
+  }
+}
+void DCTranslator::translateTargetNumFunction(int cur_thread_num, int total_thread_size){
+  int tmp_i=0;
+  MCObjectDisassembler::AddressSetTy DummyTailCallTargets;
+  for(const auto &F : MCM.funcs()){
+    DIS.SwitchToFunction(&*F);
+    if(tmp_i%total_thread_size==cur_thread_num){
+      translateFunction(&*F,DummyTailCallTargets);
+    }
+    tmp_i++;
+  }
+}
+/*
+add by -death end 
+*/
 
 Function *DCTranslator::translateRecursivelyAt(uint64_t Addr) {
   SmallSetVector<uint64_t, 16> WorkList;

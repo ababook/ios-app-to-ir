@@ -152,7 +152,7 @@ template <> struct isPodLike<MCOperand> { static const bool value = true; };
 class MCInst {
   unsigned Opcode;
   SMLoc Loc;
-  SmallVector<MCOperand, 8> Operands;
+  SmallVector<MCOperand, 1> Operands;
 
 public:
   MCInst() : Opcode(0) {}

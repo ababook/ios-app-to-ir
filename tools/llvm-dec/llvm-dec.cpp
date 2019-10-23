@@ -150,7 +150,7 @@ int main(int argc, char **argv) {
   
   TimerGroup TG("... llvm-dec module time report ...");
 
-  Timer *BinLoadTimer = new Timer("Bin load time", TG);
+  Timer *BinLoadTimer = new Timer("Bin load overhead", TG);
   BinLoadTimer->startTimer();
   auto Binary = createBinary(InputFilename);
   if (std::error_code ec = Binary.getError()) {
@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
   }
   BinLoadTimer->stopTimer();
 
-  Timer *MachOParseTimer = new Timer("Mach-O parse time", TG);
+  Timer *MachOParseTimer = new Timer("Mach-O parse overhead", TG);
   MachOParseTimer->startTimer();
   ObjectFile *Obj;
   if (!(Obj = dyn_cast<ObjectFile>((*Binary).getBinary())))
@@ -238,7 +238,7 @@ int main(int argc, char **argv) {
   std::unique_ptr<const MCInstrAnalysis> MIA(
       TheTarget->createMCInstrAnalysis(MII.get()));
 
-  Timer *MCTimer = new Timer("MC time", TG);
+  Timer *MCTimer = new Timer("MC overhead", TG);
   MCTimer->startTimer();
   std::unique_ptr<MCObjectDisassembler> OD(
       new MCObjectDisassembler(*Obj, *DisAsm, *MIA));
@@ -247,7 +247,9 @@ int main(int argc, char **argv) {
   errs() << "Linear code size: " << utostr(OD->TextSegList.size()) << "\n";
   errs() << "Recursive disassembled code size: " << utostr(OD->InstParsedList.size()) << "\n";
   errs() << "None general operand code size: " << utostr(OD->NoneGeneralOperandList.size()) << "\n";
-
+//  errs() << "Maximum inst size: " << utostr(OD->MaximumInstSize) << "\n";
+    for (int i = 0; i < sizeof(OD->DisInstSize) / sizeof(unsigned int); i++)
+        errs() << utostr(i) << " :" << utostr(OD->DisInstSize[i]) << "\n";
     //ugly coding, but I only find PackedVector support such kind of operation...
 //    for (size_t i = 0; i < OD->TextSegList.size(); ++i) {
 //      const uint64_t Addr = OD->TextSegList[i];
@@ -257,7 +259,7 @@ int main(int argc, char **argv) {
         
   MCTimer->stopTimer();
 //  delete MCTimer;
-
+    
   /*
     add by -death
    */
@@ -272,7 +274,7 @@ int main(int argc, char **argv) {
 
 //    errs()<<"all code size : "<<code_size<<"\n";
   }
-
+//    return 0;
   /*
     add by -death end 
    */
@@ -322,7 +324,7 @@ int main(int argc, char **argv) {
   if (!TranslationEntrypoint)
     TranslationEntrypoint = MOS->getEntrypoint();
 
-    Timer *DCTimer = new Timer("DC time", TG);
+    Timer *DCTimer = new Timer("DC overhead", TG);
     DCTimer->startTimer();
 //  DT->createMainFunctionWrapper(
 //      DT->translateRecursivelyAt(TranslationEntrypoint));
@@ -330,7 +332,7 @@ int main(int argc, char **argv) {
     Function *main_fn = DT->getCurrentTranslationModule()->getFunction("fn_" + utohexstr(TranslationEntrypoint));
     DCTimer->stopTimer();
  
-    Timer *FuncTimer = new Timer("FunctionNamePass time", TG);
+    Timer *FuncTimer = new Timer("FunctionNamePass overhead", TG);
     FuncTimer->startTimer();
 //    assert(main_fn);
     if (main_fn)
@@ -359,7 +361,7 @@ int main(int argc, char **argv) {
         
 
         if (PrintBitcode) {
-            Timer *SaveBinTimer = new Timer("Bin save time", TG);
+            Timer *SaveBinTimer = new Timer("Bin save overhead", TG);
             SaveBinTimer->startTimer();
             WriteBitcodeToFile(DT->getCurrentTranslationModule(), FDOut->os(), true);
             SaveBinTimer->stopTimer();

@@ -82,6 +82,8 @@ public:
     SmallSetVector<uint64_t, 16> InstParsedList;
     SmallSetVector<uint64_t, 16> NoneGeneralOperandList;
     
+    unsigned int DisInstSize[8] = {0};
+    
 protected:
   const object::ObjectFile &Obj;
   const MCDisassembler &Dis;

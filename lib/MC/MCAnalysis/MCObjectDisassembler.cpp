@@ -366,6 +366,7 @@ void MCObjectDisassembler::disassembleFunctionAt(
       for (uint64_t Addr = BeginAddr; Addr < EndAddr; Addr += InstSize) {
 
         MCInst Inst;
+          
 //        ArrayRef<uint8_t> inst4Test = {0x1F, 0x20, 0x03, 0xD5};
 //        ArrayRef<uint8_t> inst4Test = {0xD5, 0x03, 0x20, 0x1F}; capstone consider this inst as `nop', disassembler dump it as `<MCInst 0 <MCOperand Reg:157> <MCOperand Reg:166> <MCOperand Reg:136> <MCOperand Reg:136>>', that is the operand is `0'
         if (Dis.getInstruction(Inst, InstSize,
@@ -373,6 +374,12 @@ void MCObjectDisassembler::disassembleFunctionAt(
                                nulls(), nulls())) {
 
             InstParsedList.insert(Addr);
+//            errs() << sizeof(Inst) << "\n";
+//            InstSize
+//            if(Inst.size() > MaximumInstSize)
+            
+            DisInstSize[Inst.size()] += 1;
+//            Inst.dump();
             if(Inst.getOpcode() == 0)
             {
                 NoneGeneralOperandList.insert(Addr);

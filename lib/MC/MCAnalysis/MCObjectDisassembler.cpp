@@ -558,7 +558,7 @@ llvm::MCObjectDisassembler::AddressSetTy MCObjectDisassembler::findFunctionStart
             uint32_t Offset = Cmd_ptr[2];
             uint32_t Size = Cmd_ptr[3];
             MachO::linkedit_data_command c = MachO->getLinkeditDataLoadCommand(*Load_it);
-            errs() << c.dataoff << "\n" << c.datasize << "\n";
+//            errs() << c.dataoff << "\n" << c.datasize << "\n";
             StringRef FunctionStarts = MachO->getData().slice(Offset, Offset + Size);
 //            MemoryBuffer buffer = MemoryBuffer::getMemBuffer(FunctionStarts);
             uint64_t LastFunctionStart = 0x0;

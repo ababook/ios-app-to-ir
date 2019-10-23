@@ -151,6 +151,7 @@ template <> struct isPodLike<MCOperand> { static const bool value = true; };
 /// instruction.
 class MCInst {
   unsigned Opcode;
+  // TODO:: Set offset to Loc or remove this field.
   SMLoc Loc;
   SmallVector<MCOperand, 1> Operands;
 

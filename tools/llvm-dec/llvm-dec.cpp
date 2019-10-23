@@ -247,9 +247,11 @@ int main(int argc, char **argv) {
   errs() << "Linear code size: " << utostr(OD->TextSegList.size()) << "\n";
   errs() << "Recursive disassembled code size: " << utostr(OD->InstParsedList.size()) << "\n";
   errs() << "None general operand code size: " << utostr(OD->NoneGeneralOperandList.size()) << "\n";
-//  errs() << "Maximum inst size: " << utostr(OD->MaximumInstSize) << "\n";
-    for (int i = 0; i < sizeof(OD->DisInstSize) / sizeof(unsigned int); i++)
-        errs() << utostr(i) << " :" << utostr(OD->DisInstSize[i]) << "\n";
+
+// to find the operands len distribution
+//    for (int i = 0; i < sizeof(OD->DisInstSize) / sizeof(unsigned int); i++)
+//        errs() << utostr(i) << " :" << utostr(OD->DisInstSize[i]) << "\n";
+
     //ugly coding, but I only find PackedVector support such kind of operation...
 //    for (size_t i = 0; i < OD->TextSegList.size(); ++i) {
 //      const uint64_t Addr = OD->TextSegList[i];

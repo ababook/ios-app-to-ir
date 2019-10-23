@@ -92,7 +92,7 @@ private:
   }
 
   friend class SymbolTableListTraits<Function, Module>;
-
+public:
   void setParent(Module *parent);
 
   /// hasLazyArguments/CheckLazyArguments - The argument list of a function is

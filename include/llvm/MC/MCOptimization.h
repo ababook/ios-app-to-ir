@@ -107,13 +107,27 @@ private:
 
 // for those remainings that take 1 arguments.
         "_objc_release",
-        "_objc_autoreleasePoolPop",
-        "_objc_autoreleasePoolPush",
         "_objc_destroyWeak",
-        "_objc_loadWeak",
-        "_objc_loadWeakRetained",
+        "_objc_autoreleasePoolPush",
+        "_objc_autoreleasePoolPop"
             
     };
+    std::list<std::string> MoveX1ToX0Call = {
+      "_objc_copyWeak",
+      "_objc_moveWeak"
+    };
+
+    std::list<std::string> StrX1ToX0ADDCall = {
+      "_objc_storeStrong",
+      "_objc_storeWeak",
+      "_objc_initWeak"
+    };
+
+    std::list<std::string> LDRX0ADDToX0Call = { // later  i'll add comment for different code;
+      "_objc_loadWeak",
+      "_objc_loadWeakRetained"
+    };
+
   
     
   const uint64_t stub_item_size = 0xC;

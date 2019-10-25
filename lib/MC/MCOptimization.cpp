@@ -92,6 +92,8 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
     BE = target_func->end();BI!=BE;BI++){
         MCBasicBlock* tmp_bb;
         tmp_bb = *BI;
+        MCInst* pre_inst=nullptr;
+        const int base_x = 199;
         std::vector<MCDecodedInst> optimized_inst = std::vector<MCDecodedInst>();
         for(auto tmp_decode_inst=tmp_bb->begin();
         tmp_decode_inst!=tmp_bb->end();tmp_decode_inst++){
@@ -109,6 +111,7 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                     if(tmp_operand.isImm()==false){
                       llvm_unreachable("OP_BL the first operand is not imm");
                     }
+                    
                     uint64_t target_address = tmp_decode_inst->Address;
                     target_address = target_address + tmp_operand.getImm()*4;
                     //if(target_address>cur_file->){
@@ -116,37 +119,53 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                     if(target_func_name==nullptr){
                         break;
                     }
-                    
                     for (std::string s : NoneSideEffectAPI) {
+                    
                         if(strcmp(target_func_name, s.c_str()) == 0){
 //                            errs() << s << "\n";
                            // optimized_inst.push_back(*tmp_decode_inst);
                            uint64_t cur_inst_add = tmp_decode_inst->Address;
                             tmp_inst->setOpcode(0);
                             BL_OBJ_RELEASE_SIZE++;
-//                            auto pre_decode_inst = tmp_decode_inst;
-//                            pre_decode_inst--;
-//                            const MCInst* tmp_pre_inst = &pre_decode_inst->Inst;
-//                            StringRef tmp_name;
-//                            tmp_name = target_func->getName();
-//                            unsigned op_code = tmp_pre_inst->getOpcode();
-//                            unsigned op_num = tmp_pre_inst->getNumOperands();
-//                            for(int tmp_i=0;tmp_i<op_num;tmp_i++){
-//                                MCOperand tmp_op = tmp_pre_inst->getOperand(tmp_i);
-//                                if(tmp_op.isImm()){
-//                                    unsigned tmp_imm = tmp_op.getImm();
-//                                    //errs()<<"op "<<tmp_i<<" is imm : "<<tmp_imm<<"\n";
-//                                }
-//                                if(tmp_op.isReg()){
-//                                    unsigned tmp_reg = tmp_op.getReg();
-//                                     //errs()<<"op "<<tmp_i<<" is reg : "<<tmp_reg<<"\n";
-//                                }
-//                            }
                         }
 
                     }
+
+                    for (std::string s : MoveX1ToX0Call){
+                        if(strcmp(target_func_name, s.c_str())==0){
+                            //tmp_inst->setOpcode();
+                            tmp_inst->setOpcode(1315);  //orrXrs
+                            tmp_inst->clear();
+                            
+                            tmp_inst->addOperand(MCOperand::createReg(base_x+0));
+                            tmp_inst->addOperand(MCOperand::createReg(7));
+                            tmp_inst->addOperand(MCOperand::createReg(base_x+1));
+                            tmp_inst->addOperand(MCOperand::createImm(0));
+                        }
+                    }
+                    for (std::string s: LDRX0ADDToX0Call){
+                        if(strcmp(target_func_name,s.c_str())==0){
+                            tmp_inst->setOpcode(1112);//LdrXui
+                            tmp_inst->clear();
+                            tmp_inst->addOperand(MCOperand::createReg(base_x+0));
+                            tmp_inst->addOperand(MCOperand::createReg(base_x+0));
+                            tmp_inst->addOperand(MCOperand::createImm(0));
+                        }
+                    }
+
+                    for(std::string s: StrX1ToX0ADDCall){
+                        if(strcmp(target_func_name,s.c_str())==0){
+                            tmp_inst->setOpcode(2102); //StrXui
+                            tmp_inst->clear();
+                            tmp_inst->addOperand(MCOperand::createReg(base_x+0));
+                            tmp_inst->addOperand(MCOperand::createReg(base_x+1));
+                            tmp_inst->addOperand(MCOperand::createImm(0));
+                        }
+                    }
+
                 }
             }
+            
        }
        
     }

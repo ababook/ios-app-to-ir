@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
 //    for (int i = 0; i < sizeof(OD->DisInstSize) / sizeof(unsigned int); i++)
 //        errs() << utostr(i) << " :" << utostr(OD->DisInstSize[i]) << "\n";
 
-    //ugly coding, but I only find PackedVector support such kind of operation...
+//ugly coding, but I only find PackedVector support such kind of operation...
 //    for (size_t i = 0; i < OD->TextSegList.size(); ++i) {
 //      const uint64_t Addr = OD->TextSegList[i];
 //      if (OD->InstParsedList.count(Addr) == 0)
@@ -319,12 +319,21 @@ int main(int argc, char **argv) {
    */
 
   std::unique_ptr<DCTranslator> DT(
-    new DCTranslator(getGlobalContext(), DL,
-                     TOLvl, *DIS, *DRS, *MIP, *STI, *MCM,
-                     OD.get(), AnnotateIROutput));
+    new DCTranslator(
+                     getGlobalContext(),    /* LLVMContext */
+                     DL,        /* DataLayout */
+                     TOLvl,     /* TransOpt::Level */
+                     *DIS,      /* DCInstrSema */
+                     *DRS,      /* DCRegisterSema */
+                     *MIP,      /* MCInstPrinter */
+                     *STI,      /* MCSubtargetInfo */
+                     *MCM,      /* MCModule */
+                     OD.get(),  /* MCObjectDisassembler */
+                     AnnotateIROutput   /* EnableIRAnnotation */
+                     ));
 
   if (!TranslationEntrypoint)
-    TranslationEntrypoint = MOS->getEntrypoint();
+    TranslationEntrypoint = MOS->getEntrypoint();   /* MCObjectSymbolizer */
 
     Timer *DCTimer = new Timer("DC overhead", TG);
     DCTimer->startTimer();

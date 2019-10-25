@@ -434,6 +434,10 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
   }
 
   Vals.clear();
+    
+//    delete CurrentInst;
+//    delete CurrentTInst;
+    
   CurrentInst = nullptr;
   CurrentTInst = nullptr;
   return true;

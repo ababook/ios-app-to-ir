@@ -112,9 +112,9 @@ private:
         "_objc_destroyWeak",
         "_objc_loadWeak",
         "_objc_loadWeakRetained",
-        
-        
+            
     };
+  
     
   const uint64_t stub_item_size = 0xC;
   /*

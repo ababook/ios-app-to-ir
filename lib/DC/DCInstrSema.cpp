@@ -383,6 +383,7 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
     assert(true);
   }
 
+//    Maybe `-REC_add' is better than `-enable-dc-pc-save' and `-annot', for the latter create object.
   if (EnableInstAddrSave) {
     ConstantInt *CurIVal =
         Builder->getInt64(reinterpret_cast<uint64_t>(CurrentInst->Address));
@@ -391,8 +392,8 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
         Builder->getInt64Ty()->getPointerTo());
     Builder->CreateStore(CurIVal, CurIPtr, true);
   }
-    CurrentInst->Inst.dump();
-    errs() << "[!]CurrentInst->Address: " << utohexstr(CurrentInst->Address) << "\n";
+//    CurrentInst->Inst.dump();
+//    errs() << "[!]CurrentInst->Address: " << utohexstr(CurrentInst->Address) << "\n";
     if (0x1000060E4 == CurrentInst->Address)
     {
         errs() << "foo";
@@ -426,9 +427,9 @@ bool DCInstrSema::translateInst(const MCDecodedInst &DecodedInst,
     }
 
     while ((Opcode = Next()) != DCINS::END_OF_INSTRUCTION) {
-      errs() << "[+]Opcode: " << utohexstr(Opcode) << "\n";
+//      errs() << "[+]Opcode: " << utohexstr(Opcode) << "\n";
       if (translateOpcode(Opcode)) continue;
-      errs() << "[!]CurrentInst->Address: " << utohexstr(CurrentInst->Address) << "\n";
+//      errs() << "[!]CurrentInst->Address: " << utohexstr(CurrentInst->Address) << "\n";
       break;
     }
   }

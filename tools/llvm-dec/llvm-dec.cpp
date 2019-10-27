@@ -271,7 +271,8 @@ int main(int argc, char **argv) {
     if(MachOObjectFile *MachO = dyn_cast<MachOObjectFile>(Obj)){
       std::unique_ptr<MCOptimization> MCOpt(new MCOptimization(&(*MCM),MachO));
       MCOpt->try_to_optimize();
-      errs() << "ARC code erased: " << utostr(MCOpt->getOptimizedInstCount()) << "\n";
+      errs() << "None Semantic ARC code erased: " << utostr(MCOpt->getNoneSemanticARCCount()) << "\n";
+      errs() << "Semantic ARC code replaced: " << utostr(MCOpt->getSemanticARCCount()) << "\n";
     }
 
 //    errs()<<"all code size : "<<code_size<<"\n";

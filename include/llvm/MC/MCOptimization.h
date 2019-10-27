@@ -68,7 +68,8 @@ private:
   uint64_t* sym_name_add;
   uint32_t sym_size;
   
-  uint32_t BL_OBJ_RELEASE_SIZE;
+  uint32_t NoneSemanticARC;
+  uint32_t SemanticARC;
 
   const char* objc_release_str = "_objc_release";
   
@@ -141,11 +142,13 @@ public:
   MCOptimization(MCModule* target_module, llvm::object::MachOObjectFile* target_obj_file){
     cur_module = target_module;
     cur_file = target_obj_file;
-    BL_OBJ_RELEASE_SIZE = 0;
+    NoneSemanticARC = 0;
+      SemanticARC = 0;
     analyze_macho_file_for_dynamic_symbol_name(cur_file);
   }
   void try_to_optimize();
-  uint64_t getOptimizedInstCount() const;
+  uint64_t getNoneSemanticARCCount() const;
+  uint64_t getSemanticARCCount() const;
 
 };
 }

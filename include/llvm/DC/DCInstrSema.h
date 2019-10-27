@@ -126,7 +126,7 @@ protected:
   unsigned Idx;
   EVT ResEVT;
   unsigned Opcode;
-  SmallVector<Value *, 16> Vals;
+  SmallVector<Value *, 1> Vals;
   const MCDecodedInst *CurrentInst;
   DCTranslatedInst *CurrentTInst;
 

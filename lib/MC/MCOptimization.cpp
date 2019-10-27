@@ -126,7 +126,7 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                            // optimized_inst.push_back(*tmp_decode_inst);
                            uint64_t cur_inst_add = tmp_decode_inst->Address;
                             tmp_inst->setOpcode(0);
-                            BL_OBJ_RELEASE_SIZE++;
+                            NoneSemanticARC++;
                         }
 
                     }
@@ -141,6 +141,8 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                             tmp_inst->addOperand(MCOperand::createReg(7));
                             tmp_inst->addOperand(MCOperand::createReg(base_x+1));
                             tmp_inst->addOperand(MCOperand::createImm(0));
+                            SemanticARC++;
+
                         }
                     }
                     for (std::string s: LDRX0ADDToX0Call){
@@ -150,6 +152,8 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                             tmp_inst->addOperand(MCOperand::createReg(base_x+0));
                             tmp_inst->addOperand(MCOperand::createReg(base_x+0));
                             tmp_inst->addOperand(MCOperand::createImm(0));
+                            SemanticARC++;
+
                         }
                     }
 
@@ -160,6 +164,8 @@ void MCOptimization::optimize_func_code(MCFunction* target_func){
                             tmp_inst->addOperand(MCOperand::createReg(base_x+0));
                             tmp_inst->addOperand(MCOperand::createReg(base_x+1));
                             tmp_inst->addOperand(MCOperand::createImm(0));
+                            SemanticARC++;
+
                         }
                     }
 
@@ -181,7 +187,8 @@ void MCOptimization::try_to_optimize(){
 //    errs()<<"bl _obj_release size : "<<BL_OBJ_RELEASE_SIZE<<"\n";
 }
 
-uint64_t MCOptimization::getOptimizedInstCount() const {return BL_OBJ_RELEASE_SIZE;}
+uint64_t MCOptimization::getNoneSemanticARCCount() const {return NoneSemanticARC;}
+uint64_t MCOptimization::getSemanticARCCount() const {return SemanticARC;}
 
 //http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489h/Cjafcggi.html
 

@@ -81,8 +81,8 @@ public:
         ValueInfo(DecodedInst, V, ValueInfo::ImmOpKind, MIOperandNo));
   }
 
-  SmallVector<ValueInfo, 4> OperandUseVals;
-  SmallVector<ValueInfo, 2> OperandDefVals;
+  SmallVector<ValueInfo, 1> OperandUseVals;
+  SmallVector<ValueInfo, 1> OperandDefVals;
   SmallVector<ValueInfo, 1> ImpUseVals;
   SmallVector<ValueInfo, 1> ImpDefVals;
 

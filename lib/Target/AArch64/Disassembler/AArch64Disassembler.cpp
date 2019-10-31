@@ -180,7 +180,8 @@ static DecodeStatus DecodeXSeqPairsClassRegisterClass(MCInst &Inst,
 
 static void TagNoneGeneralOperand(MCInst &Inst)
 {
-    Inst.setOpcode(AArch64::PHI);
+//    if (OptimizeOption)   //How to deliver this argument?
+        Inst.setOpcode(AArch64::PHI);
 }
 
 static bool Check(DecodeStatus &Out, DecodeStatus In) {

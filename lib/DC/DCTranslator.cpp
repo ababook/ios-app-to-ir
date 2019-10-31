@@ -25,6 +25,8 @@
 #include <vector>
 #include <sstream>
 
+
+// seems that `mem2reg' pass can accomplish this task. For performance consideration?
 namespace llvm {
 class NonVolatileRegistersPass : public FunctionPass {
     public:
@@ -109,6 +111,10 @@ bool NonVolatileRegistersPass::hasCall(const BasicBlock &BB) {
     }
     return false;
 }
+
+//check AArch64RegisterInfo.td AArch64GenRegisterInfo.inc for detail??
+//https://stackoverflow.com/questions/261419/what-registers-to-save-in-the-arm-c-calling-convention
+//callee-saved register https://developer.arm.com/docs/ihi0055/latest/procedure-call-standard-for-the-arm-64-bit-architecture
 
 bool NonVolatileRegistersPass::isNonVolatile(uint64_t Idx) {
     switch (Idx) {

@@ -3277,7 +3277,14 @@ void AArch64InstrSema::translateTargetIntrinsic(unsigned IntrinsicID) {
 
             std::vector<Value*> args;
             args.push_back(op1);
-
+            /*
+            add by -death
+            both of the operand should be push into args or the llvm-slicer can not decode the code
+            */
+            args.push_back(op2);
+            /*
+            add by -death end 
+            */
             std::vector<Type*> types;
             types.push_back(ResEVT.getTypeForEVT(getGlobalContext()));
 

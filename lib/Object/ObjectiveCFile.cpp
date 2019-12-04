@@ -195,7 +195,20 @@ void ObjectiveCFile::resolveMethods(ObjcClassInfoStruct_t *ClassInfo, bool Class
         if (Methodname == "notifyInAppPurchasingEnabledChanged") {
             assert(true);
         }
-        std::string N = ((ClassMethods ? "+[" : "-[") + ClassName + " " + Methodname + "]").str();
+        /*
+            add by -death to repair the conversion between stringref and twine
+             */
+        //std::string N = ((ClassMethods ? "+[" : "-[") + ClassName + " " + Methodname + "]").str();
+        std::string N;
+        if(ClassMethods == true){
+            N = StringRef("+[").str() + ClassName.str() + StringRef(" ").str() + Methodname.str() + StringRef("]").str();
+        }
+        else{
+            N = StringRef("-[").str() + ClassName.str() + StringRef(" ").str() + Methodname.str() + StringRef("]").str();
+        }
+        /*
+        add by -death
+         */
         // errs() << utohexstr(MethodlistEntry[MethodIdx].Implementation) << ": " << N << "\n";
         FunctionNames.insert(std::pair<uint64_t, std::string>(MethodlistEntry[MethodIdx].Implementation, N));
     }
@@ -237,7 +250,15 @@ void ObjectiveCFile::resolveMethods(ObjcCatInfoStruct_t *CatInfo, bool ClassMeth
                 continue;
             StringRef Methodname = getMethodName(ObjcMethodnamesData, ObjcMethodnamesAddress,
                                                  MethodlistEntry[MethodIdx].Name);
-            StringRef N = ("-[" + ClassName + " " + Methodname + "]").str();
+            /*
+            add by -death to repair the conversion between stringref and twine
+             */
+            std::string tmp_N = StringRef("-[").str() + ClassName.str() + StringRef(" ").str() + Methodname.str() + StringRef("]").str();
+            StringRef N = StringRef(tmp_N);
+            /*
+            add by -death
+             */
+            //StringRef N = ("-[" + ClassName + " " + Methodname + "]").str();
             // errs() << utohexstr(MethodlistEntry[MethodIdx].Implementation) << ": " << N << "\n";
             FunctionNames.insert(std::pair<uint64_t, std::string>(MethodlistEntry[MethodIdx].Implementation, N.str()));
         }
@@ -253,7 +274,15 @@ void ObjectiveCFile::resolveMethods(ObjcCatInfoStruct_t *CatInfo, bool ClassMeth
                 continue;
             StringRef Methodname = getMethodName(ObjcMethodnamesData, ObjcMethodnamesAddress,
                                                  MethodlistEntry[MethodIdx].Name);
-            StringRef N = ("+[" + ClassName + " " + Methodname + "]").str();
+            /*
+            add by -death to repair the conversion between stringref and twine
+             */
+            std::string tmp_N = StringRef("+[").str() + ClassName.str() + StringRef(" ").str() + Methodname.str() + StringRef("]").str();
+            StringRef N = StringRef(tmp_N);
+            //StringRef N = ("+[" + ClassName + " " + Methodname + "]").str();
+            /*
+            add by -death
+             */
             // errs() << utohexstr(MethodlistEntry[MethodIdx].Implementation) << ": " << N << "\n";
             FunctionNames.insert(std::pair<uint64_t, std::string>(MethodlistEntry[MethodIdx].Implementation, N.str()));
         }

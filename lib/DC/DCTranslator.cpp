@@ -305,24 +305,27 @@ void DCTranslator::translateFunction(
 
   AddrPrettyStackTraceEntry X(MCFN->getEntryBlock()->getStartAddr(),
                               "Function");
-
+  getGlobalContext().setCurAdd(MCFN->getEntryBlock()->getStartAddr());
   DIS.SwitchToFunction(MCFN);
 
   // First, make sure all basic blocks are created, and sorted.
   std::vector<const MCBasicBlock *> BasicBlocks;
   std::copy(MCFN->begin(), MCFN->end(), std::back_inserter(BasicBlocks));
   std::sort(BasicBlocks.begin(), BasicBlocks.end(), BBBeginAddrLess);
-  for (auto &BB : BasicBlocks)
+  for (auto &BB : BasicBlocks){
+    getGlobalContext().setCurAdd(BB->getStartAddr());
     DIS.getOrCreateBasicBlock(BB->getStartAddr());
+  }
 
   for (auto &BB : *MCFN) {
     AddrPrettyStackTraceEntry X(BB->getStartAddr(), "Basic Block");
-
+    getGlobalContext().setCurAdd(BB->getStartAddr());
     DEBUG(dbgs() << "Translating basic block starting at 0x"
                  << utohexstr(BB->getStartAddr()) << ", with " << BB->size()
                  << " instructions.\n");
     DIS.SwitchToBasicBlock(BB);
     for (auto &I : *BB) {
+      getGlobalContext().setCurAdd(I.Address);
       //(dbgs() << "Translating instruction:\n " << I.Inst << " at 0x" << utohexstr(I.Address) << "\n");
       DCTranslatedInst TI(I);
       if (!DIS.translateInst(I, TI)) {
@@ -336,8 +339,10 @@ void DCTranslator::translateFunction(
     DIS.FinalizeBasicBlock();
   }
 
-  for (auto TailCallTarget : TailCallTargets)
+  for (auto TailCallTarget : TailCallTargets){
+    getGlobalContext().setCurAdd(TailCallTarget);
     DIS.createExternalTailCallBB(TailCallTarget);
+  }
 
   Function *Fn = DIS.FinalizeFunction();
   {

@@ -861,6 +861,27 @@ public:
 
 class LLVMContextImpl {
 public:
+
+   /*
+  add by -death 
+  */
+ bool record_or_not;
+ uint64_t cur_inst_add;
+ bool getRecordOrNot(){
+   return record_or_not;
+ }
+ void setRecordOrNot(bool r_n){
+    record_or_not = r_n;
+ }
+ void setCurAdd(uint64_t cur_add){
+   cur_inst_add = cur_add;
+ }
+ uint64_t getCurAdd(){
+   return cur_inst_add;
+ }
+ /*
+ add by -death end 
+ */
   /// OwnedModules - The set of modules instantiated in this context, and which
   /// will be automatically deleted if this context is deleted.
   SmallPtrSet<Module*, 4> OwnedModules;

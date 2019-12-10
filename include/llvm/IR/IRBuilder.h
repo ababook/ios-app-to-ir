@@ -120,6 +120,15 @@ public:
   void SetInstDebugLocation(Instruction *I) const {
     if (CurDbgLocation)
       I->setDebugLoc(CurDbgLocation);
+    if(getContext().getRecordOrNot() ==true){
+       //char tmp_char[5] = {0x0,0x0,0x0,0x0,0x0};
+      //memcpy(((char*)&cur_code_add),tmp_char,4);
+      //MDNode* tmp_node = MDNode::get(getContext(),MDString::get(getContext(),tmp_char));
+     MDNode* tmp_node = MDNode::get(getContext(),MDString::get(getContext(),utohexstr(getContext().getCurAdd())));
+      I->setMetadata("num",tmp_node);
+    }
+    else{
+    }
   }
 
   /// \brief Get the return type of the current function that we're emitting
@@ -589,11 +598,6 @@ public:
   /// \brief Insert and return the specified instruction.
   template<typename InstTy>
   InstTy *Insert(InstTy *I, const Twine &Name = "") const {
-    if(record_or_not ==true){
-      MDNode* tmp_node = MDNode::get(getContext(),MDString::get(getContext(),utohexstr(cur_code_add)));
-      I->setMetadata("num",tmp_node);
-    }
-    
     this->InsertHelper(I, Name, BB, InsertPt);
     this->SetInstDebugLocation(I);
     return I;

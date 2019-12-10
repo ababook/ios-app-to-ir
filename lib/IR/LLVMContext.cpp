@@ -30,6 +30,26 @@ static ManagedStatic<LLVMContext> GlobalContext;
 LLVMContext& llvm::getGlobalContext() {
   return *GlobalContext;
 }
+/*
+add by -death
+*/
+
+void LLVMContext::setCurAdd(uint64_t cur_add){
+  pImpl->setCurAdd(cur_add);
+}
+uint64_t LLVMContext::getCurAdd(){
+  return pImpl->getCurAdd();
+}
+bool LLVMContext::getRecordOrNot(){
+  return pImpl->getRecordOrNot();
+}
+void LLVMContext::setRecordOrNot(bool record_or_not){
+  pImpl->setRecordOrNot(record_or_not);
+}
+
+/*
+add by -death end 
+*/
 
 LLVMContext::LLVMContext() : pImpl(new LLVMContextImpl(*this)) {
   // Create the fixed metadata kinds. This is done in the same order as the

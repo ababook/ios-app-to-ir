@@ -43,6 +43,16 @@ public:
   LLVMContextImpl *const pImpl;
   LLVMContext();
   ~LLVMContext();
+  /*
+  add by -death
+  */
+  bool getRecordOrNot();
+  void setRecordOrNot(bool);
+  void setCurAdd(uint64_t);
+  uint64_t getCurAdd();
+  /*
+  add by -death end ;
+  */
 
   // Pinned metadata names, which always have the same value.  This is a
   // compile-time performance optimization, not a correctness optimization.

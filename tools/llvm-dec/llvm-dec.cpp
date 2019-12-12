@@ -311,10 +311,10 @@ int main(int argc, char **argv) {
     errs() << "error: no dc instruction sema for target " << TripleName << "\n";
     return 1;
   }
-  /*
+   /*
   add by -death 
    */
-  DIS->set_record_add(RecordAdd);
+  getGlobalContext().setRecordOrNot(RecordAdd);
   /*
   add by -death end 
    */
